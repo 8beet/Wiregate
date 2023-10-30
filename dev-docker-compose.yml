@@ -37,7 +37,7 @@ services:
 
   wg_dashboard:
     depends_on: [unbound, adguard]
-    #build: ./WG-Dash
+    #build: ./Apps/WG-Dash
     image: noxcis/wg-dashboard:orca
     container_name: wg_dashboard
     cap_add:
@@ -65,9 +65,9 @@ services:
   channels:
     depends_on: [db, wg_dashboard]
     container_name: channels_messenger
-    #image: noxcis/channels:orca
+    image: noxcis/channels:orca
     restart: unless-stopped
-    build: ./Channels
+    #build: ./Apps/Channels
     command: python run.py
     environment:
       - IS_DOCKER=1
@@ -96,6 +96,30 @@ services:
     networks:
       private_network:
         ipv4_address: 10.2.0.5
+
+  darkwire:
+    container_name: darkwire
+    build: ./Apps/Darkwire
+    environment:
+      - TZ=UTC
+      - VITE_API_PORT=80
+      - VITE_API_HOST=localhost
+      - VITE_API_PROTOCOL=http
+      - VITE_COMMIT_SHA=some_sha
+      - VITE_MAX_FILE_SIZE=4
+      - MAILGUN_API_KEY=api-key
+      - MAILGUN_DOMAIN=darkwire.io
+      - ABUSE_TO_EMAIL_ADDRESS=abuse@darkwire.io
+      - ABUSE_FROM_EMAIL_ADDRESS=Darkwire <no-reply@darkwire.io>
+      - CLIENT_DIST_DIRECTORY='client/dist'
+      - ROOM_HASH_SECRET='some-uuid'
+      - SITE_URL=https://darkwire.io
+      - STORE_BACKEND=memory
+      #- STORE_HOST=$STORE_HOST
+    networks:
+      private_network:
+        ipv4_address: 10.2.0.6
+  
 
 volumes:
     postgres_data:
