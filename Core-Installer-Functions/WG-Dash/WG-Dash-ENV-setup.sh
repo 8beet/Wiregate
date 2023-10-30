@@ -124,7 +124,7 @@ set_port_range() {
 
 }
 generate_wireguard_qr() {
-    local config_file="./WG-Dash/master-key/master.conf"
+    local config_file="./Apps/WG-Dash/master-key/master.conf"
 
     if ! [ -f "$config_file" ]; then
         echo "Error: Config file not found."
@@ -135,7 +135,7 @@ generate_wireguard_qr() {
     master_key_title
     printf "%s\n" "$stars"
     printf "%s\n" "$dashes"
-    cat ./WG-Dash/master-key/master.conf | sed 's/.*/\x1b[33m&\x1b[0m/'
+    cat ./Apps/WG-Dash/master-key/master.conf | sed 's/.*/\x1b[33m&\x1b[0m/'
     printf "%s\n" "$equals"
     printf "%s\n"
     qrencode -t ANSIUTF8 < "$config_file"
