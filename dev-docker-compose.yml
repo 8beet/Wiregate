@@ -116,6 +116,8 @@ services:
       - SITE_URL=https://darkwire.io
       - STORE_BACKEND=memory
       #- STORE_HOST=$STORE_HOST
+    ports:
+      - 80:80
     networks:
       private_network:
         ipv4_address: 10.2.0.6
