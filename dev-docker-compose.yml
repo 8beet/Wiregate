@@ -45,7 +45,7 @@ services:
       - SYS_MODULE
     restart: unless-stopped
     volumes:
-      - ./WG-Dash/master-key:/home/app/master-key
+      - ./Apps/WG-Dash/master-key:/home/app/master-key
     environment:
       - WG_DASH_USER=admin
       - WG_DASH_PASS_ENCRYPTED="$$2a$$12$$DqKBORUB7.3sBiUXNQ8Fg.mX861V0jI3qwVGAAjNt9UCBjdMRLHeW"
@@ -62,41 +62,7 @@ services:
       private_network:
         ipv4_address: 10.2.0.3
 
-  channels:
-    depends_on: [db, wg_dashboard]
-    container_name: channels_messenger
-    image: noxcis/channels:orca
-    restart: unless-stopped
-    #build: ./Apps/Channels
-    command: python run.py
-    environment:
-      - IS_DOCKER=1
-      - FLASK_APP=app/__init__.py
-      - FLASK_ENV=development
-      - SQL_HOST=db
-      - SQL_PORT=5432
-      - DATABASE=postgres
-      - SECRET_KEY=ed215f114bd528c0870a9c4900c69a1e
-      - DATABASE_URI=postgresql://user:password@db:5432/db
-    networks:
-      private_network:
-        ipv4_address: 10.2.0.4
-    
-
-  db:
-    container_name: channels_db
-    image: postgres:13-alpine
-    restart: unless-stopped
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=db
-    networks:
-      private_network:
-        ipv4_address: 10.2.0.5
-
+  
   darkwire:
     container_name: darkwire
     build: ./Apps/Darkwire
@@ -116,8 +82,8 @@ services:
       - SITE_URL=https://darkwire.io
       - STORE_BACKEND=memory
       #- STORE_HOST=$STORE_HOST
-    ports:
-      - 80:80
+    #ports:
+      #- 80:80
     networks:
       private_network:
         ipv4_address: 10.2.0.6

@@ -15,5 +15,5 @@ cd ../
 
 echo "building server..."
 cd server
-yarn  --production=true
+yarn  --production=false
 yarn build
