@@ -1,11 +1,20 @@
 #!/bin/bash
 
 start_wgd () {
-    #create_wiresentinel_user &&
+  echo ""
+  echo -e "ifconfig--------------------------------------------------------------------------------\n"
+    ifconfig
+  echo ""
+  echo -e "iptables -L--------------------------------------------------------------------------------\n"
     iptables -L
-    uwsgi --ini wg-uwsgi.ini
-    #uwsgi --uid wiresentinel --ini wg-uwsgi.ini
-    #su - wiresentinel -c "uwsgi --ini ./wg-uwsgi.ini"
+  echo ""
+  echo -e "iptables -t nat -L--------------------------------------------------------------------------------\n"
+    iptables -t nat -L
+  echo ""
+  echo -e "Start Dashboard--------------------------------------------------------------------------------\n"
+    uwsgi --uid wiresentinel --ini wg-uwsgi.ini
+  echo "--------------------------------------------------------------------------------"
+ 
 }
 
 newconf_wgd () {

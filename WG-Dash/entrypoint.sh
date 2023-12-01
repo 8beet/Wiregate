@@ -22,13 +22,16 @@ fi
 
 run_wireguard_up() {
   config_files=$(find /etc/wireguard -type f -name "*.conf")
+
   
   for file in $config_files; do
     config_name=$(basename "$file" ".conf")
     chmod 600 "/etc/wireguard/$config_name.conf"
-    wg-quick up "$config_name" 
+    
+    wg-quick up "$config_name"  
   done
 }
+
 
 
 
@@ -40,24 +43,48 @@ create_wiresentinel_user() {
     fi
 
     password=$(openssl rand -base64 180 | tr -d '\n')
-    adduser -D -g '' wiresentinel
-    echo "wiresentinel:$password" | chpasswd
-    addgroup gatekeeper
-    adduser wiresentinel gatekeeper
+    
+    # Create wiresentinel user without a home directory and with /bin/false as the shell
+    adduser -D -H -s /bin/false wiresentinel
+    # Set password for wiresentinel
+    echo "wiresentinel:$password" | chpasswd  > /dev/null 2>&1
+    # Set permissions on /home
     chmod 750 /home
-    chown -R wiresentinel:gatekeeper /home
-    chown -R wiresentinel:gatekeeper /etc/wireguard
-    #su - wiresentinel 
-    # Note: The script will not continue beyond this point if 'su' is successful,
-    # as the shell will be running as the newly created user.
+    # Set ownership of /home and /etc/wireguard to wiresentinel:gatekeeper
+    chown -R wiresentinel:wiresentinel /home
+    chown -R wiresentinel:wiresentinel /etc/wireguard
+    # Run uWSGI command as wiresentinel without a password prompt
+
+    # Add wiresentinel to the wheel group
+    adduser wiresentinel wheel
+
+    # Uncomment the %wheel line in sudoers file
+    sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
+
+    
+}
+
+logs_title() {
+  echo -e "\033[32m"
+  echo '
+________________________________________________________________________________
+|                                                                               |
+|       ██╗    ██╗██╗██████╗ ███████╗ ██████╗  █████╗ ████████╗███████╗         |
+|       ██║    ██║██║██╔══██╗██╔════╝██╔════╝ ██╔══██╗╚══██╔══╝██╔════╝         |
+|       ██║ █╗ ██║██║██████╔╝█████╗  ██║  ███╗███████║   ██║   █████╗           |
+|       ██║███╗██║██║██╔══██╗██╔══╝  ██║   ██║██╔══██║   ██║   ██╔══╝           |
+|       ╚███╔███╔╝██║██║  ██║███████╗╚██████╔╝██║  ██║   ██║   ███████╗         |
+|        ╚══╝╚══╝ ╚═╝╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝         |
+|                                    LOGS                                       |
+|_______________________________________________________________________________|'                                                               
+  echo -e "\033[33m"
+  echo ""
 }
 
 
-
-
-
-#create_wiresentinel_user
-
+create_wiresentinel_user
+logs_title 
+sleep 0.005
 run_wireguard_up 
 
 
