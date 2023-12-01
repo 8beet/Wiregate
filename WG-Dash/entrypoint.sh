@@ -35,35 +35,6 @@ run_wireguard_up() {
 
 
 
-create_wiresentinel_user() {
-    # Check if the user already exists
-    if id "wiresentinel" &>/dev/null; then
-        echo "User wiresentinel already exists."
-        return 1
-    fi
-
-    password=$(openssl rand -base64 180 | tr -d '\n')
-    
-    # Create wiresentinel user without a home directory and with /bin/false as the shell
-    adduser -D -H -s /bin/false wiresentinel
-    # Set password for wiresentinel
-    echo "wiresentinel:$password" | chpasswd  > /dev/null 2>&1
-    # Set permissions on /home
-    chmod 750 /home
-    # Set ownership of /home and /etc/wireguard to wiresentinel:gatekeeper
-    chown -R wiresentinel:wiresentinel /home
-    chown -R wiresentinel:wiresentinel /etc/wireguard
-    # Run uWSGI command as wiresentinel without a password prompt
-
-    # Add wiresentinel to the wheel group
-    adduser wiresentinel wheel
-
-    # Uncomment the %wheel line in sudoers file
-    sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
-
-    
-}
-
 logs_title() {
   echo -e "\033[32m"
   echo '
@@ -82,9 +53,11 @@ ________________________________________________________________________________
 }
 
 
-create_wiresentinel_user
+
 logs_title 
-sleep 0.005
+
+
+
 run_wireguard_up 
 
 

@@ -12,7 +12,7 @@ start_wgd () {
     iptables -t nat -L
   echo ""
   echo -e "Start Dashboard--------------------------------------------------------------------------------\n"
-    uwsgi --uid wiresentinel --ini wg-uwsgi.ini
+    uwsgi --ini wg-uwsgi.ini
   echo "--------------------------------------------------------------------------------"
  
 }
