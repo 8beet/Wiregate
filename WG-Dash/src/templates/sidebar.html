@@ -45,3 +45,22 @@
         </nav>
     </div>
 </div>
+<script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
+
+<script>
+    $(document).ready(function() {
+        // Add click event listener to links in the "Zones" section
+        $('.nav-conf-link').on('click', function(event) {
+            event.preventDefault(); // Prevent default behavior (e.g., navigating to the href)
+
+            // Get the href attribute of the clicked link
+            var url = $(this).attr('href');
+
+            // Redirect to the specified URL
+            window.location.href = url;
+        });
+    });
+</script
